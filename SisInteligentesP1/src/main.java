@@ -51,8 +51,9 @@ public class main {
 		// Para acceder directamente desde la BD de OSM online
 		// Utilizar XmlDownloader
 		System.out.println("Cargando");		
-		//TODO
-		RunnableSource reader = new XmlDownloader(-3.9426,-3.9101,38.9978,38.9685, null);
+		//cojemos de argumentos las coordenadas
+		RunnableSource reader = new XmlDownloader(Double.parseDouble(args[0]),Double.parseDouble(args[1]),
+				Double.parseDouble(args[2]),Double.parseDouble(args[3]), null);
 		
 		reader.setSink(sinkImplementation);
 
