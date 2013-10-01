@@ -3,6 +3,7 @@
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -20,10 +21,9 @@ import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
 
 public class main {
 	
-	private static ArrayList<Node> nodos = new ArrayList<Node>();
-	private static ArrayList<Way> vias = new ArrayList<Way>();
-	
+	private static Map<Long,Entity> map = new HashMap <>();
 	static public void main(String[] args) {
+		
 		//File file = new File("data/map.osm");// Para trabajar offile
 		Sink sinkImplementation = new Sink() {
 			public void initialize(Map<String, Object> metaData) {
@@ -32,14 +32,10 @@ public class main {
 			public void process(EntityContainer entityContainer) {
 				Entity entity = entityContainer.getEntity();
 				if (entity instanceof Node) {
-					showNode((Node)entity);
-				} else if (entity instanceof Way) {
-					Iterator <Tag>tags=entity.getTags().iterator();
-					if(tags.hasNext()){
-						String tag=tags.next().getValue();
-						if(tag.equals("residential")||tag.equals("pedestrian"))
-							showWay((Way)entity);
-					}
+					map.put(entity.getId(), entity);
+				}else if (entity instanceof Way) {
+//TODO;
+					
 				}
 			}
 			
