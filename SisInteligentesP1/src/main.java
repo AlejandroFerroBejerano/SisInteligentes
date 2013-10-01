@@ -2,12 +2,16 @@
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.Entity;
 import org.openstreetmap.osmosis.core.domain.v0_6.Node;
+import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
 import org.openstreetmap.osmosis.core.domain.v0_6.Way;
+import org.openstreetmap.osmosis.core.domain.v0_6.WayNode;
 import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
 import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 import org.openstreetmap.osmosis.xml.common.CompressionMethod;
@@ -28,12 +32,14 @@ public class main {
 			public void process(EntityContainer entityContainer) {
 				Entity entity = entityContainer.getEntity();
 				if (entity instanceof Node) {
-//TODO
-					nodos.add(new Node(entity.getId(), entity.getVersion(), entity.getTimestamp(), entity.getUser(),entity.getChangesetId(), ((Node) entity).getLatitude(), ((Node) entity).getLongitude()));
+					showNode((Node)entity);
 				} else if (entity instanceof Way) {
-//TODO
-					vias.add(new Way(entity.getId(), entity.getVersion(), entity.getTimestamp(), entity.getUser(), entity.getChangesetId()));
-				//buscar nodos y añadirlos
+					Iterator <Tag>tags=entity.getTags().iterator();
+					if(tags.hasNext()){
+						String tag=tags.next().getValue();
+						if(tag.equals("residential")||tag.equals("pedestrian"))
+							showWay((Way)entity);
+					}
 				}
 			}
 			
@@ -68,10 +74,24 @@ public class main {
 			}
 		}
 		
-		System.out.println("Fin de carga:");
-		System.out.print(nodos.size());
-		System.out.println(" nodos");
-		System.out.print(vias.size());
-		System.out.println(" vias");
+		System.out.println("Fin :)");
+
+	}
+	
+	private static void showNode(Node nodo){
+		System.out.println(nodo.getId()+"\t"+nodo.getLatitude()+"\t"+nodo.getLongitude());
+	}
+	private static void showWay(Way via){
+		Iterator <Tag>tags=via.getTags().iterator();
+		Iterator<WayNode>nodos=via.getWayNodes().iterator();
+		while(tags.hasNext())
+			System.out.print(tags.next().getValue()+"\t");
+		System.out.println("");
+		//nodos
+		while(nodos.hasNext()){
+			System.out.println("\t"+nodos.next().getNodeId());
+		}
+		
+		
 	}
 }
