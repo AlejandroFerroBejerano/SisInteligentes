@@ -1,11 +1,13 @@
 // Instalar osmosis e incorporar sus paquetes JAR
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.Entity;
@@ -100,7 +102,7 @@ public class main {
 				/* No hacer nada */
 			}
 		}
-		
+		menu();
 		System.out.println("Fin :)");
 
 	}
@@ -119,6 +121,42 @@ public class main {
 			System.out.println("\t"+nodos.next().getNodeId());
 		}
 		
+		
+	}
+	private ArrayList <Long> getAdjacents(long idNodo){
+		Iterator<infEnlace>enlaces;
+		infEnlace enlaceActual;
+		ArrayList <Long> nodosAdyacentes=new ArrayList <>();
+		
+		enlaces=map.get(idNodo).getVias().iterator();
+		while(enlaces.hasNext()){
+			enlaceActual=enlaces.next();
+			nodosAdyacentes.add(enlaceActual.getIdNodoDestino());
+		}
+		return nodosAdyacentes;
+	}
+	private static void menu(){
+		long idNodo=0;
+		Iterator<Long>enlaces;
+		Scanner leer = new Scanner(System.in);
+		System.out.println("----------------------------------------------------------------------"
+				+ "-------------------");
+		System.out.println("-- Bienvenido , introduzca en numero de nodo para ver sus adyacentes --");
+		System.out.println("----------------------------------------------------------------------"
+				+ "-------------------");
+		System.out.println("Una vez introducido el Id del nodo, presione ENTER...");
+		//comprobacion de id correcto
+		while(idNodo==0){
+			try{
+				idNodo=leer.nextLong();
+			}catch(Exception e){
+				System.out.println("Id del nodo mal introducido, recuerde que el id solo se compone de numeros.");
+			}
+		}
+		System.out.println("IDNodo:"+idNodo+"\nAdyacentes:");
+		enlaces=getAdjacents(idNodo).iterator();
+		while(enlaces.hasNext())
+			System.out.println("\t"+enlaces.next());
 		
 	}
 }

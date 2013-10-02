@@ -18,5 +18,10 @@ public class infEnlace {
 		this.nodo2=nodo2;
 		this.wrongway=oneway;
 	}
-
+	public long getIdNodoOrigen(){
+		return nodo1;
+	}
+	public long getIdNodoDestino(){
+		return nodo2;
+	}
 }
