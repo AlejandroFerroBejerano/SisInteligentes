@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.openstreetmap.osmosis.core.OsmosisRuntimeException;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.Entity;
 import org.openstreetmap.osmosis.core.domain.v0_6.Node;
@@ -105,10 +104,10 @@ public class main {
 				coordenadaInf = Math.min(Double.parseDouble(args[1]),
 						Double.parseDouble(args[3]));
 				// Para usar el fichero XML descargado. cojemos de argumentos
-				// las coordenadas
+				// las coordenadas -3.9426 -3.9101 38.9978 38.9685
 				reader = new XmlDownloader(coordenadaIzq, coordenadaDer,
 						coordenadaSup, coordenadaInf, null);
-			} catch (OsmosisRuntimeException e) {
+			} catch (Exception e) {
 				//TODO solucionar duplicacion de codigo!!!!
 				System.out
 						.println("Error descargando el mapa, se usaran el mapa por defecto.");
