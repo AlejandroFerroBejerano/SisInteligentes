@@ -35,10 +35,12 @@ public class main {
 					showNode((Node)entity);
 				} else if (entity instanceof Way) {
 					Iterator <Tag>tags=entity.getTags().iterator();
-					if(tags.hasNext()){
-						String tag=tags.next().getValue();
-						if(tag.equals("residential")||tag.equals("pedestrian"))
+					while(tags.hasNext()){
+						Tag tag=tags.next();
+						if(tag.getKey().equals("highway")&&tag.getValue().equals("residential")||tag.getValue().equals("pedestrian")){
 							showWay((Way)entity);
+							break;
+						}
 					}
 				}
 			}
@@ -84,9 +86,13 @@ public class main {
 	private static void showWay(Way via){
 		Iterator <Tag>tags=via.getTags().iterator();
 		Iterator<WayNode>nodos=via.getWayNodes().iterator();
-		while(tags.hasNext())
-			System.out.print(tags.next().getValue()+"\t");
-		System.out.println("");
+		Tag tag;
+		while(tags.hasNext()){
+			tag=tags.next();
+			if(tag.getKey().equals("name")||tag.getKey().equals("highway")||tag.getKey().equals("oneway"))
+				System.out.print(tag.getKey()+" "+tag.getValue()+"\t");
+		}
+		System.out.println(via.getId());
 		//nodos
 		while(nodos.hasNext()){
 			System.out.println("\t"+nodos.next().getNodeId());
