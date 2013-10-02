@@ -24,9 +24,8 @@ import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
 public class main {
 	
 	private static Map<Long,payloadMap> map = new HashMap <>();
-	static public void main(String[] args) {
-		
-		//File file = new File("data/map.osm");// Para trabajar offile
+	public static void main(String[] args) {
+		File file = new File("data/map.osm");// Para trabajar offile
 		Sink sinkImplementation = new Sink() {
 			public void initialize(Map<String, Object> metaData) {
 			};
@@ -45,7 +44,7 @@ public class main {
 					ArrayList <infEnlace> enlaces ; 
 					long idnodo1,idnodo2;
 					Tag tag;
-//TODO					//unimos nodos contiguos unos con otros
+						//unimos nodos contiguos unos con otros
 						// estructura a añadir: lista de infEnlaces
 					//1º ver si es oneway
 						while(tags.hasNext()){
@@ -79,17 +78,19 @@ public class main {
 			}
 
 		};
-		CompressionMethod compression = CompressionMethod.None;
-		//RunnableSource reader = new XmlReader(file, false, compression);
-		// Para usar el fichero XML descargado.
-
-		// Para acceder directamente desde la BD de OSM online
-		// Utilizar XmlDownloader
-		System.out.println("Cargando");		
-		//cojemos de argumentos las coordenadas
-		RunnableSource reader = new XmlDownloader(Double.parseDouble(args[0]),Double.parseDouble(args[1]),
-				Double.parseDouble(args[2]),Double.parseDouble(args[3]), null);
-		
+		RunnableSource reader;
+		//comprobando coordenadas
+		if(args.length!=4){
+			System.out.println("Error en las coordenadas del mapa, se usaran coordenadas por defecto.");
+			CompressionMethod compression = CompressionMethod.None;
+			reader = new XmlReader(file, false, compression);
+		}else{
+			// Para usar el fichero XML descargado.
+			//cojemos de argumentos las coordenadas
+			reader = new XmlDownloader(Double.parseDouble(args[0]),Double.parseDouble(args[1]),
+					Double.parseDouble(args[2]),Double.parseDouble(args[3]), null);
+		}
+		System.out.println("Cargando");
 		reader.setSink(sinkImplementation);
 
 		Thread readerThread = new Thread(reader);
@@ -150,6 +151,7 @@ public class main {
 		while(idNodo==0){
 			try{
 				idNodo=Long.parseLong(leer.next());
+				leer.close();
 			}catch(Exception e){
 				System.out.println("Id del nodo mal introducido, recuerde que el id solo se compone de numeros.");
 			}
