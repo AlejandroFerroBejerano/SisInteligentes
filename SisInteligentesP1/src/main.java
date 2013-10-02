@@ -141,11 +141,10 @@ public class main {
 		long idNodo=0;
 		Iterator<Long>enlaces;
 		Scanner leer = new Scanner(System.in);
-		System.out.println("----------------------------------------------------------------------"
-				+ "-------------------");
+		System.out.println("-----------------------------------------------------------------------");
 		System.out.println("-- Bienvenido , introduzca en numero de nodo para ver sus adyacentes --");
-		System.out.println("----------------------------------------------------------------------"
-				+ "-------------------");
+		System.out.println("-----------------------------------------------------------------------");
+
 		System.out.println("Una vez introducido el Id del nodo, presione ENTER...");
 		//comprobacion de id correcto
 		while(idNodo==0){
