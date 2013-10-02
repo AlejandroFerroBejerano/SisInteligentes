@@ -21,7 +21,7 @@ import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
 
 public class main {
 	
-	private static Map<Long,Entity> map = new HashMap <>();
+	private static Map<Long,ArrayList<infEnlace>> map = new HashMap <>();
 	static public void main(String[] args) {
 		
 		//File file = new File("data/map.osm");// Para trabajar offile
@@ -32,10 +32,33 @@ public class main {
 			public void process(EntityContainer entityContainer) {
 				Entity entity = entityContainer.getEntity();
 				if (entity instanceof Node) {
-					map.put(entity.getId(), entity);
+//TODO					//sacamos id nodo y rellenamos keys
+					map.put(entity.getId() , new payloadMap() );
 				}else if (entity instanceof Way) {
-//TODO;
+					boolean oneway=false;
+					Iterator <Tag>tags=entity.getTags().iterator();
+					Iterator<WayNode>nodos=((Way) entity).getWayNodes().iterator();
+					ArrayList <infEnlace> enlaces ; 
+					infNodo nodo1,nodo2;
+					Tag tag;
+//TODO					//unimos nodos contiguos unos con otros
+						// estructura a añadir: lista de infEnlaces
+					//1º ver si es oneway
+						while(tags.hasNext()){
+							tag=tags.next();
+							if(tag.getKey().equals("oneway")){
+								oneway=tag.getValue().equalsIgnoreCase("yes");	
+								break;
+							}
+						}
+					//2º obtener nodo origen y nodo destino (solo da la id)
+						
+					//3º crear objeto
+					//4º obtener  lista y añadirlo a la lista
+					//5º si es twoways tambin el otro dsentido
+					//6º set lista por key en el hashmap
 					
+					map.
 				}
 			}
 			
