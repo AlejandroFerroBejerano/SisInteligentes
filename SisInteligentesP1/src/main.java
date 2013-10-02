@@ -123,7 +123,7 @@ public class main {
 		
 		
 	}
-	private ArrayList <Long> getAdjacents(long idNodo){
+	private static ArrayList <Long> getAdjacents(long idNodo){
 		Iterator<infEnlace>enlaces;
 		infEnlace enlaceActual;
 		ArrayList <Long> nodosAdyacentes=new ArrayList <>();
