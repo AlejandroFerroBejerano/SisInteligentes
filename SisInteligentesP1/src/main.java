@@ -127,11 +127,13 @@ public class main {
 		Iterator<infEnlace>enlaces;
 		infEnlace enlaceActual;
 		ArrayList <Long> nodosAdyacentes=new ArrayList <>();
-		
+		try{
 		enlaces=map.get(idNodo).getVias().iterator();
 		while(enlaces.hasNext()){
 			enlaceActual=enlaces.next();
 			nodosAdyacentes.add(enlaceActual.getIdNodoDestino());
+		}
+		}catch(Exception e){
 		}
 		return nodosAdyacentes;
 	}
@@ -148,14 +150,16 @@ public class main {
 		//comprobacion de id correcto
 		while(idNodo==0){
 			try{
-				idNodo=leer.nextLong();
+				idNodo=Long.parseLong(leer.next());
 			}catch(Exception e){
 				System.out.println("Id del nodo mal introducido, recuerde que el id solo se compone de numeros.");
 			}
 		}
 		System.out.println("IDNodo:"+idNodo+"\nAdyacentes:");
 		enlaces=getAdjacents(idNodo).iterator();
-		while(enlaces.hasNext())
+		if(!enlaces.hasNext()){
+			System.out.println("el nodo no tiene adyacentes o no existe.");
+		}else while(enlaces.hasNext())
 			System.out.println("\t"+enlaces.next());
 		
 	}
