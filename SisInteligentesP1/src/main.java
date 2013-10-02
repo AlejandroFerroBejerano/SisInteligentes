@@ -21,7 +21,7 @@ import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
 
 public class main {
 	
-	private static Map<Long,ArrayList<infEnlace>> map = new HashMap <>();
+	private static Map<Long,payloadMap> map = new HashMap <>();
 	static public void main(String[] args) {
 		
 		//File file = new File("data/map.osm");// Para trabajar offile
@@ -32,14 +32,16 @@ public class main {
 			public void process(EntityContainer entityContainer) {
 				Entity entity = entityContainer.getEntity();
 				if (entity instanceof Node) {
-//TODO					//sacamos id nodo y rellenamos keys
-					map.put(entity.getId() , new payloadMap() );
+//TODO					// setup de la key del hashmap e inclusion de la estructura y sus datos basicos ( infnodo y array de ways)
+					map.put(entity.getId() , new payloadMap(new infNodo(entity.getId(),
+							((Node) entity).getLatitude(),((Node) entity).getLongitude()),
+							new ArrayList<infEnlace>()) );
 				}else if (entity instanceof Way) {
 					boolean oneway=false;
 					Iterator <Tag>tags=entity.getTags().iterator();
 					Iterator<WayNode>nodos=((Way) entity).getWayNodes().iterator();
 					ArrayList <infEnlace> enlaces ; 
-					infNodo nodo1,nodo2;
+					long idnodo1,idnodo2;
 					Tag tag;
 //TODO					//unimos nodos contiguos unos con otros
 						// estructura a añadir: lista de infEnlaces
@@ -52,13 +54,19 @@ public class main {
 							}
 						}
 					//2º obtener nodo origen y nodo destino (solo da la id)
-						
-					//3º crear objeto
-					//4º obtener  lista y añadirlo a la lista
-					//5º si es twoways tambin el otro dsentido
-					//6º set lista por key en el hashmap
-					
-					map.
+						idnodo1=nodos.next().getNodeId();
+						while(nodos.hasNext()){ // se repite esta tarea con los sucesivos nodos
+							idnodo2=nodos.next().getNodeId();
+						//3º crear objeto	
+						//4º obtener  lista y añadirlo a la lista
+							enlaces=map.get(idnodo1).getVias();
+							enlaces.add(new infEnlace(entity.getId(),idnodo1,idnodo2,entity.getTags()));
+						//5º si es twoways tambin el otro dsentido
+							enlaces=map.get(idnodo2).getVias();
+							enlaces.add(new infEnlace(entity.getId(),idnodo2,idnodo1,entity.getTags(),oneway));
+						//6º el nodo origen ahora es destino, swap!
+							idnodo1=idnodo2;
+						}
 				}
 			}
 			
