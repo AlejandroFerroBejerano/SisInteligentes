@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.openstreetmap.osmosis.core.OsmosisRuntimeException;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.Entity;
 import org.openstreetmap.osmosis.core.domain.v0_6.Node;
@@ -108,7 +107,7 @@ public class main {
 				// las coordenadas
 				reader = new XmlDownloader(coordenadaIzq, coordenadaDer,
 						coordenadaSup, coordenadaInf, null);
-			} catch (OsmosisRuntimeException e) {
+			} catch (Exception e) {
 				//TODO solucionar duplicacion de codigo!!!!
 				System.out
 						.println("Error descargando el mapa, se usaran el mapa por defecto.");
@@ -170,15 +169,11 @@ public class main {
 		long idNodo = 0;
 		Iterator<Long> enlaces;
 		Scanner leer = new Scanner(System.in);
-		System.out
-				.println("-----------------------------------------------------------------------");
-		System.out
-				.println("-- Bienvenido , introduzca en numero de nodo para ver sus adyacentes --");
-		System.out
-				.println("-----------------------------------------------------------------------");
+		System.out.println("-----------------------------------------------------------------------");
+		System.out.println("-- Bienvenido , introduzca en numero de nodo para ver sus adyacentes --");
+		System.out.println("-----------------------------------------------------------------------");
 
-		System.out
-				.println("Una vez introducido el Id del nodo, presione ENTER...");
+		System.out.println("Una vez introducido el Id del nodo, presione ENTER...");
 		// comprobacion de id correcto
 		while (idNodo == 0) {
 			try {
@@ -186,8 +181,7 @@ public class main {
 				leer.close();
 			} catch (Exception e) {
 				leer.reset();// borramos buffer
-				System.out
-						.println("Id del nodo mal introducido, recuerde que el id solo se compone de numeros.");
+				System.out.println("Id del nodo mal introducido, recuerde que el id solo se compone de numeros.");
 			}
 		}
 		System.out.println("\nIDNodo:" + idNodo + "\nAdyacentes:");

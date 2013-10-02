@@ -1,7 +1,7 @@
 import java.util.Collection;
 import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
 
-
+//TODO devolver tambien distancia y vias al mostrar
 public class infEnlace {
 
 	private long id,nodo1, nodo2;
