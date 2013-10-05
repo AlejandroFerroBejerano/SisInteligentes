@@ -104,7 +104,7 @@ public class main {
 				coordenadaInf = Math.min(Double.parseDouble(args[1]),
 						Double.parseDouble(args[3]));
 				// Para usar el fichero XML descargado. cojemos de argumentos
-				// las coordenadas -3.9426 -3.9101 38.9978 38.9685
+				// las coordenadas -
 				reader = new XmlDownloader(coordenadaIzq, coordenadaDer,
 						coordenadaSup, coordenadaInf, null);
 			} catch (Exception e) {
@@ -149,16 +149,16 @@ public class main {
 			System.out.println("\t" + nodos.next().getNodeId());
 		}
 	}
-
-	private static ArrayList<Long> getAdjacents(long idNodo) {
+	
+	private static ArrayList<infEnlace> getAdjacents(long idNodo) {
 		Iterator<infEnlace> enlaces;
 		infEnlace enlaceActual;
-		ArrayList<Long> nodosAdyacentes = new ArrayList<>();
+		ArrayList<infEnlace> nodosAdyacentes = new ArrayList<>();
 		try {
 			enlaces = map.get(idNodo).getVias().iterator();
 			while (enlaces.hasNext()) {
 				enlaceActual = enlaces.next();
-				nodosAdyacentes.add(enlaceActual.getIdNodoDestino());
+				nodosAdyacentes.add(enlaceActual);
 			}
 		} catch (Exception e) {
 		}
@@ -167,8 +167,10 @@ public class main {
 
 	private static void menu() {
 		long idNodo = 0;
-		Iterator<Long> enlaces;
+		Iterator<infEnlace> enlaces;
+		infEnlace enlace;
 		Scanner leer = new Scanner(System.in);
+		
 		System.out
 				.println("-----------------------------------------------------------------------");
 		System.out
@@ -193,9 +195,36 @@ public class main {
 		enlaces = getAdjacents(idNodo).iterator();
 		if (!enlaces.hasNext()) {
 			System.out.println("el nodo no tiene adyacentes o no existe.");
-		} else
-			while (enlaces.hasNext())
-				System.out.println("\t" + enlaces.next());
+		}else
+			while (enlaces.hasNext()){
+				enlace=enlaces.next();
+				System.out.println("\t" + enlace.getIdNodoDestino() +" "+enlace.getName()+" "+
+				distanciaEuclidea(map.get(enlace.getIdNodoOrigen()).getInfNodo().getLon(),
+					map.get(enlace.getIdNodoOrigen()).getInfNodo().getLat(),
+					map.get(enlace.getIdNodoDestino()).getInfNodo().getLon(),
+					map.get(enlace.getIdNodoDestino()).getInfNodo().getLat())+"m"
+				);
+			}
 
+	}
+	//ecuación de Harvesine para la distanca entre dos puntos geograficos dados en coordenadas decimales.
+	private static double distanciaEuclidea(double Lo1,double La1,double Lo2,double La2){
+		double Distancia1 = 0;
+        double r = 6378;
+
+        //Punto inicial
+        La1 = La1* Math.PI / 180;
+        Lo1 = Lo1 * Math.PI / 180;
+
+        // Punto final
+        La2 = La2 * Math.PI / 180;
+        Lo2 = Lo2 * Math.PI / 180;        
+        Distancia1 = Math.pow(Math.sin((Lo2 - Lo1) / 2), 2);
+        Distancia1 = Math.cos(La1) * Math.cos(La2) * Distancia1;
+        Distancia1 = Math.pow(Math.sin((La2 - La1) / 2), 2) + Distancia1;
+        Distancia1 = Math.sqrt(Distancia1);
+        Distancia1 = 2 * r * Math.asin(Distancia1);
+        Distancia1*=1000; // multiplicamos para obtener metros
+        return Distancia1;
 	}
 }

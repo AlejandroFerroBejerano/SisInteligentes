@@ -1,4 +1,6 @@
 import java.util.Collection;
+import java.util.Iterator;
+
 import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
 
 
@@ -11,11 +13,13 @@ public class infEnlace {
 		this.id=id;
 		this.nodo1=nodo1;
 		this.nodo2=nodo2;
+		this.informacion=informacion;
 	}
 	public infEnlace(long id,long nodo1,long nodo2,Collection<Tag> informacion,boolean oneway){
 		this.id=id;
 		this.nodo1=nodo1;
 		this.nodo2=nodo2;
+		this.informacion=informacion;
 		this.wrongway=oneway;
 	}
 	public long getIdNodoOrigen(){
@@ -23,5 +27,14 @@ public class infEnlace {
 	}
 	public long getIdNodoDestino(){
 		return nodo2;
+	}
+	public String getName() {
+		Tag tag;
+		Iterator <Tag> camposInfo;
+		camposInfo=informacion.iterator();
+		do{
+			tag=camposInfo.next();
+		}while(!tag.getKey().equals("name")||!camposInfo.hasNext());
+		return tag.getValue();
 	}
 }

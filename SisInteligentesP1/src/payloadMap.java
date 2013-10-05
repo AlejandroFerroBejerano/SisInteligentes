@@ -11,4 +11,7 @@ public payloadMap(infNodo nodo, ArrayList<infEnlace> vias){
 public ArrayList<infEnlace> getVias(){
 	return vias;
 }
+public infNodo getInfNodo(){
+	return nodo;
+}
 }
