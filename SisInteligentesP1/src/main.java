@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
@@ -66,12 +67,12 @@ public class main {
 						// 3º crear objeto
 						// 4º obtener lista y añadirlo a la lista
 						enlaces = map.get(idnodo1).getVias();
-						enlaces.add(new infEnlace(entity.getId(), idnodo1,
-								idnodo2, entity.getTags()));
+						enlaces.add(new infEnlace(entity.getId(), map.get(idnodo1).getInfNodo(),
+								map.get(idnodo2).getInfNodo(), entity.getTags()));
 						// 5º marcamos el reciproco, indicando si es transitable ( tag oneway )
 						enlaces = map.get(idnodo2).getVias();
-						enlaces.add(new infEnlace(entity.getId(), idnodo2,
-								idnodo1, entity.getTags(), oneway));
+						enlaces.add(new infEnlace(entity.getId(), map.get(idnodo2).getInfNodo(),
+								map.get(idnodo1).getInfNodo(), entity.getTags(), oneway));
 						// 6º el nodo origen ahora es destino, swap!
 						idnodo1 = idnodo2;
 					}
@@ -164,6 +165,30 @@ public class main {
 		}
 		return nodosAdyacentes;
 	}
+	
+	private void sucesores(infNodo nodoorigen){
+		Iterator<infEnlace> nodosSucesores;
+		infEnlace enlace;
+		PriorityQueue<nodoBusqueda> frontera= new PriorityQueue<>();
+		
+		nodosSucesores=map.get(nodoorigen.getId()).getVias().iterator();
+		while(nodosSucesores.hasNext()){
+			enlace = nodosSucesores.next();
+			frontera.add(new nodoBusqueda(enlace.getIdNodoOrigen(),enlace,enlace.getDistancia(),0,null));
+		}
+		
+	}
+	private boolean esFinal(infNodo origen,infNodo fin){
+		Iterator<infEnlace> nodosSucesores;
+		infEnlace enlace;
+		nodosSucesores=map.get(origen.getId()).getVias().iterator();
+		boolean esfinal=false;
+		while(nodosSucesores.hasNext()&&!esfinal){
+			enlace=nodosSucesores.next();
+			esfinal=enlace.getIdNodoDestino().equals(fin);
+		}
+		return esfinal;
+	}
 
 	private static void menu() {
 		long idNodo = 0;
@@ -199,32 +224,10 @@ public class main {
 			while (enlaces.hasNext()){
 				enlace=enlaces.next();
 				System.out.println("\t" + enlace.getIdNodoDestino() +" "+enlace.getName()+" "+
-				distanciaEuclidea(map.get(enlace.getIdNodoOrigen()).getInfNodo().getLon(),
-					map.get(enlace.getIdNodoOrigen()).getInfNodo().getLat(),
-					map.get(enlace.getIdNodoDestino()).getInfNodo().getLon(),
-					map.get(enlace.getIdNodoDestino()).getInfNodo().getLat())+"m"
+				enlace.getDistancia()+"m"
 				);
 			}
 
 	}
 	//ecuación de Harvesine para la distanca entre dos puntos geograficos dados en coordenadas decimales.
-	private static double distanciaEuclidea(double Lo1,double La1,double Lo2,double La2){
-		double Distancia1 = 0;
-        double r = 6378;
-
-        //Punto inicial
-        La1 = La1* Math.PI / 180;
-        Lo1 = Lo1 * Math.PI / 180;
-
-        // Punto final
-        La2 = La2 * Math.PI / 180;
-        Lo2 = Lo2 * Math.PI / 180;        
-        Distancia1 = Math.pow(Math.sin((Lo2 - Lo1) / 2), 2);
-        Distancia1 = Math.cos(La1) * Math.cos(La2) * Distancia1;
-        Distancia1 = Math.pow(Math.sin((La2 - La1) / 2), 2) + Distancia1;
-        Distancia1 = Math.sqrt(Distancia1);
-        Distancia1 = 2 * r * Math.asin(Distancia1);
-        Distancia1*=1000; // multiplicamos para obtener metros
-        return Distancia1;
-	}
 }

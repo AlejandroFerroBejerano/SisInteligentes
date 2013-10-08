@@ -14,4 +14,7 @@ public class infNodo {
 	public double getLon(){
 		return lon;
 	}
+	public long getId(){
+		return id;
+	}
 }
