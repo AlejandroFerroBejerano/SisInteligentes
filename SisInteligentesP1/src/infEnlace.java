@@ -1,11 +1,10 @@
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 
 import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
 
 
-public class infEnlace implements Comparator<infEnlace> {
+public class infEnlace{
 
 	private long id;
 	private infNodo nodo1, nodo2;
@@ -39,17 +38,7 @@ public class infEnlace implements Comparator<infEnlace> {
 		}while(!tag.getKey().equals("name")||!camposInfo.hasNext());
 		return tag.getValue();
 	}
-	@Override
-	public int compare(infEnlace o1, infEnlace o2) {
-		if (o1.getDistancia() < o2.getDistancia())
-        {
-            return -1;
-        }else if (o1.getDistancia() > o2.getDistancia())
-        {
-            return 1;
-        }
-        return 0;
-	}
+
 	public double getDistancia() {
 		double Lo1, La1, Lo2, La2, Distancia1 = 0,r = 6378;
 	        //Punto inicial

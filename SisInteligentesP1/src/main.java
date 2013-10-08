@@ -151,12 +151,12 @@ public class main {
 		}
 	}
 	
-	private static ArrayList<infEnlace> getAdjacents(long idNodo) {
+	private static ArrayList<infEnlace> getAdjacents(infNodo idNodo) {
 		Iterator<infEnlace> enlaces;
 		infEnlace enlaceActual;
 		ArrayList<infEnlace> nodosAdyacentes = new ArrayList<>();
 		try {
-			enlaces = map.get(idNodo).getVias().iterator();
+			enlaces = map.get(idNodo.getId()).getVias().iterator();
 			while (enlaces.hasNext()) {
 				enlaceActual = enlaces.next();
 				nodosAdyacentes.add(enlaceActual);
@@ -166,20 +166,23 @@ public class main {
 		return nodosAdyacentes;
 	}
 	
-	private void sucesores(infNodo nodoorigen){
-		Iterator<infEnlace> nodosSucesores;
-		infEnlace enlace;
+	private static PriorityQueue<nodoBusqueda> sucesores(nodoBusqueda nodoorigen){
+		Iterator<infEnlace> viasSucesores;
+		infEnlace via;
 		PriorityQueue<nodoBusqueda> frontera= new PriorityQueue<>();
-		
-		nodosSucesores=map.get(nodoorigen.getId()).getVias().iterator();
-		while(nodosSucesores.hasNext()){
-			enlace = nodosSucesores.next();
-			frontera.add(new nodoBusqueda(enlace.getIdNodoOrigen(),enlace,enlace.getDistancia(),0,null));
+		viasSucesores=getAdjacents(nodoorigen.getNodo()).iterator();
+		//nodosSucesores=map.get(nodoorigen.getNodo().getId()).getVias().iterator();
+		while(viasSucesores.hasNext()){
+			via = viasSucesores.next();
+			// para no añadir un nodo como sucesor que ya hayamos pasado por el ( es decir el padre) o si es el primer caso.
+			//TODO da error en el comparator
+			if(nodoorigen.getPadre()==null||!via.getIdNodoOrigen().equals(nodoorigen.getPadre().getNodo()))
+				frontera.add(new nodoBusqueda(via.getIdNodoDestino(),via,via.getDistancia(),nodoorigen.getProfundidad()+1,nodoorigen));
 		}
-		
+		return frontera;
 	}
-	private boolean esFinal(infNodo origen,infNodo fin){
-		Iterator<infEnlace> nodosSucesores;
+	private static boolean esFinal(infNodo origen,infNodo fin){
+		/*Iterator<infEnlace> nodosSucesores;
 		infEnlace enlace;
 		nodosSucesores=map.get(origen.getId()).getVias().iterator();
 		boolean esfinal=false;
@@ -187,7 +190,9 @@ public class main {
 			enlace=nodosSucesores.next();
 			esfinal=enlace.getIdNodoDestino().equals(fin);
 		}
-		return esfinal;
+		return esfinal;*/
+		boolean esFinal=origen.equals(fin);
+		return esFinal;
 	}
 
 	private static void menu() {
@@ -205,6 +210,15 @@ public class main {
 
 		System.out
 				.println("Una vez introducido el Id del nodo, presione ENTER...");
+		//TODO intro de prueba ES FINAL
+		long id=154748998;
+		if(esFinal(map.get(id).getInfNodo(),map.get(id).getInfNodo()))
+			System.out
+			.println("Its final!!...");
+		//TODO intro de sucesores
+		sucesores(new nodoBusqueda(map.get(id).getInfNodo(),null,0,0,null));	
+		
+		
 		// comprobacion de id correcto
 		while (idNodo == 0) {
 			try {
@@ -217,7 +231,7 @@ public class main {
 			}
 		}
 		System.out.println("\nIDNodo:" + idNodo + "\nAdyacentes:");
-		enlaces = getAdjacents(idNodo).iterator();
+		enlaces = getAdjacents(map.get(idNodo).getInfNodo()).iterator();
 		if (!enlaces.hasNext()) {
 			System.out.println("el nodo no tiene adyacentes o no existe.");
 		}else
