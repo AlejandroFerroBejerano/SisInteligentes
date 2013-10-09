@@ -109,7 +109,6 @@ public class main {
 				reader = new XmlDownloader(coordenadaIzq, coordenadaDer,
 						coordenadaSup, coordenadaInf, null);
 			} catch (Exception e) {
-				//TODO solucionar duplicacion de codigo!!!!
 				System.out
 						.println("Error descargando el mapa, se usaran el mapa por defecto.");
 				CompressionMethod compression = CompressionMethod.None;
@@ -175,51 +174,47 @@ public class main {
 		while(viasSucesores.hasNext()){
 			via = viasSucesores.next();
 			// para no añadir un nodo como sucesor que ya hayamos pasado por el ( es decir el padre) o si es el primer caso.
-			//TODO da error en el comparator
 			if(nodoorigen.getPadre()==null||!via.getIdNodoOrigen().equals(nodoorigen.getPadre().getNodo()))
 				frontera.add(new nodoBusqueda(via.getIdNodoDestino(),via,via.getDistancia(),nodoorigen.getProfundidad()+1,nodoorigen));
 		}
 		return frontera;
 	}
+
 	private static boolean esFinal(infNodo origen,infNodo fin){
-		/*Iterator<infEnlace> nodosSucesores;
-		infEnlace enlace;
-		nodosSucesores=map.get(origen.getId()).getVias().iterator();
-		boolean esfinal=false;
-		while(nodosSucesores.hasNext()&&!esfinal){
-			enlace=nodosSucesores.next();
-			esfinal=enlace.getIdNodoDestino().equals(fin);
-		}
-		return esfinal;*/
 		boolean esFinal=origen.equals(fin);
 		return esFinal;
 	}
 
 	private static void menu() {
 		long idNodo = 0;
-		Iterator<infEnlace> enlaces;
-		infEnlace enlace;
+		Iterator<nodoBusqueda> enlaces;
+		nodoBusqueda enlace;
 		Scanner leer = new Scanner(System.in);
 		
 		System.out
 				.println("-----------------------------------------------------------------------");
 		System.out
-				.println("-- Bienvenido , introduzca en numero de nodo para ver sus adyacentes --");
+				.println("-- Bienvenido , introduzca en numero de nodo para ver sus sucesores --");
 		System.out
 				.println("-----------------------------------------------------------------------");
 
 		System.out
 				.println("Una vez introducido el Id del nodo, presione ENTER...");
-		//TODO intro de prueba ES FINAL
-		long id=154748998;
-		if(esFinal(map.get(id).getInfNodo(),map.get(id).getInfNodo()))
-			System.out
-			.println("Its final!!...");
-		//TODO intro de sucesores
-		sucesores(new nodoBusqueda(map.get(id).getInfNodo(),null,0,0,null));	
-		
-		
 		// comprobacion de id correcto
+		while (idNodo == 0) {
+			try {
+				idNodo = Long.parseLong(leer.next());
+			} catch (Exception e) {
+				leer.reset();// borramos buffer
+				System.out
+						.println("Id del nodo mal introducido, recuerde que el id solo se compone de numeros.");
+			}
+		}
+		
+		enlaces = sucesores(new nodoBusqueda(map.get(idNodo).getInfNodo(),null,0,0,null)).iterator();
+		System.out.println("IDNodo:" + idNodo + "\nIntroduzca nodo final:");
+		//pedir final
+		idNodo=0;
 		while (idNodo == 0) {
 			try {
 				idNodo = Long.parseLong(leer.next());
@@ -230,18 +225,20 @@ public class main {
 						.println("Id del nodo mal introducido, recuerde que el id solo se compone de numeros.");
 			}
 		}
-		System.out.println("\nIDNodo:" + idNodo + "\nAdyacentes:");
-		enlaces = getAdjacents(map.get(idNodo).getInfNodo()).iterator();
+		
 		if (!enlaces.hasNext()) {
 			System.out.println("el nodo no tiene adyacentes o no existe.");
 		}else
 			while (enlaces.hasNext()){
 				enlace=enlaces.next();
-				System.out.println("\t" + enlace.getIdNodoDestino() +" "+enlace.getName()+" "+
-				enlace.getDistancia()+"m"
+				System.out.print("\t" + enlace.getNodo().getId() +" "+enlace.getMovimiento().getName()+" "+
+				enlace.getCoste()+"m Es final?:"
 				);
+				if(esFinal(enlace.getNodo(),map.get(idNodo).getInfNodo()))
+					System.out.println("si");
+				else
+					System.out.println("no");		
 			}
 
 	}
-	//ecuación de Harvesine para la distanca entre dos puntos geograficos dados en coordenadas decimales.
 }

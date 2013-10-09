@@ -16,16 +16,19 @@ public class nodoBusqueda  implements Comparable<nodoBusqueda> {
 		this.padre=padre;
 	}
 	public infNodo getNodo(){
-		return estado;
+		return this.estado;
 	}
 	public nodoBusqueda getPadre(){
-		return padre;
+		return this.padre;
 	}
 	public int getProfundidad() {
-		return profundidad;
+		return this.profundidad;
 	}
 	public infEnlace getMovimiento(){
-		return movimiento;
+		return this.movimiento;
+	}
+	public double getCoste(){
+		return this.costo;
 	}
 
 	@Override
