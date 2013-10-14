@@ -184,11 +184,20 @@ public class main {
 		boolean esFinal=origen.equals(fin);
 		return esFinal;
 	}
+	private static ArrayList<nodoBusqueda> stressFrontera(long id, ArrayList<nodoBusqueda> adyacentes){
+		try{
+		 adyacentes.add(sucesores(new nodoBusqueda(map.get(id).getInfNodo(),null,0,0,null)).iterator().next());
+		 stressFrontera(adyacentes.get(adyacentes.size()-1).getNodo().getId(),adyacentes);
+		}catch (StackOverflowError e){
+			System.out.println("el numero maximo de nodos es:"+adyacentes.size());
+		} 
+		return adyacentes;
+	}
 
 	private static void menu() {
 		long idNodo = 0;
-		Iterator<nodoBusqueda> enlaces;
-		nodoBusqueda enlace;
+		ArrayList<nodoBusqueda> enlaces;
+		long enlace;
 		Scanner leer = new Scanner(System.in);
 		
 		System.out
@@ -211,7 +220,7 @@ public class main {
 			}
 		}
 		
-		enlaces = sucesores(new nodoBusqueda(map.get(idNodo).getInfNodo(),null,0,0,null)).iterator();
+		enlaces = stressFrontera(idNodo,new ArrayList<nodoBusqueda>());
 		System.out.println("IDNodo:" + idNodo + "\nIntroduzca nodo final:");
 		//pedir final
 		idNodo=0;
@@ -226,9 +235,10 @@ public class main {
 			}
 		}
 		
-		if (!enlaces.hasNext()) {
+		if (enlaces.size()==0) {
 			System.out.println("el nodo no tiene adyacentes o no existe.");
-		}else
+		}
+		/*else
 			while (enlaces.hasNext()){
 				enlace=enlaces.next();
 				System.out.print("\t" + enlace.getNodo().getId() +" "+enlace.getMovimiento().getName()+" "+
@@ -239,6 +249,6 @@ public class main {
 				else
 					System.out.println("no");		
 			}
-
+		 */
 	}
 }
