@@ -180,7 +180,7 @@ public class main {
 		return esFinal;
 	}
 	
-	private static ArrayList<nodoBusqueda> stressFrontera(long id){
+	private static void stressFrontera(long id){
 		ArrayList<nodoBusqueda> adyacentes = new ArrayList<>();
 		double tiempo=System.currentTimeMillis();
 		try{
@@ -198,12 +198,10 @@ public class main {
 			System.out.println(".::Tiempo/nodo: "+ (System.currentTimeMillis()-tiempo)/adyacentes.size() +" ms::.");
 			System.out.println(".::Tiempo total: "+(System.currentTimeMillis()-tiempo)+" ms::.");
 		} 
-		return adyacentes;
 	}
 
 	private static void menu() {
 		long idNodo = 0;
-		ArrayList<nodoBusqueda> enlaces;
 		long enlace;
 		Scanner leer = new Scanner(System.in);
 		
@@ -227,35 +225,6 @@ public class main {
 			}
 		}
 		
-		enlaces = stressFrontera(idNodo);
-		System.out.println("IDNodo:" + idNodo + "\nIntroduzca nodo final:");
-		//pedir final
-		idNodo=0;
-		while (idNodo == 0) {
-			try {
-				idNodo = Long.parseLong(leer.next());
-				leer.close();
-			} catch (Exception e) {
-				leer.reset();// borramos buffer
-				System.out
-						.println("Id del nodo mal introducido, recuerde que el id solo se compone de numeros.");
-			}
-		}
-		
-		if (enlaces.size()==0) {
-			System.out.println("el nodo no tiene adyacentes o no existe.");
-		}
-		/*else
-			while (enlaces.hasNext()){
-				enlace=enlaces.next();
-				System.out.print("\t" + enlace.getNodo().getId() +" "+enlace.getMovimiento().getName()+" "+
-				enlace.getCoste()+"m Es final?:"
-				);
-				if(esFinal(enlace.getNodo(),map.get(idNodo).getInfNodo()))
-					System.out.println("si");
-				else
-					System.out.println("no");		
-			}
-		 */
+		stressFrontera(idNodo);
 	}
 }
