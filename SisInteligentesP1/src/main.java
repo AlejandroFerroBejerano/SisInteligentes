@@ -35,7 +35,6 @@ public class main {
 				Entity entity = entityContainer.getEntity();
 				if (entity instanceof Node) {
 					// setup de la key del hashmap e inclusion de la estructura contenedor payload
-					//y sus datos basicos ( infnodo y array de ways)
 					map.put(entity.getId(),
 							new payloadMap(new infNodo(entity.getId(),
 									((Node) entity).getLatitude(),
@@ -50,7 +49,6 @@ public class main {
 					long idnodo1, idnodo2;
 					Tag tag;
 					// unimos nodos contiguos unos con otros
-					// estructura a añadir: lista de infEnlaces
 					// 1º ver si es oneway
 					while (tags.hasNext()) {
 						tag = tags.next();
@@ -64,8 +62,7 @@ public class main {
 					while (nodos.hasNext()) { // se repite esta tarea con los
 												// sucesivos nodos
 						idnodo2 = nodos.next().getNodeId();
-						// 3º crear objeto
-						// 4º obtener lista y añadirlo a la lista
+						// 3º crear objeto 4º obtener lista y añadirlo a la lista
 						enlaces = map.get(idnodo1).getVias();
 						enlaces.add(new infEnlace(entity.getId(), map.get(idnodo1).getInfNodo(),
 								map.get(idnodo2).getInfNodo(), entity.getTags()));
@@ -133,21 +130,19 @@ public class main {
 
 	}
 
-	private static void showNode(Node nodo) {
-		System.out.println(nodo.getId() + "\t" + nodo.getLatitude() + "\t"
-				+ nodo.getLongitude());
+	private static void showNode(infNodo nodo) {
+		System.out.println(nodo.getId() + "\t" + nodo.getLat()+ "\t"
+				+ nodo.getLon());
 	}
 
-	private static void showWay(Way via) {
+	private static void showWay(infEnlace via) {
 		Iterator<Tag> tags = via.getTags().iterator();
-		Iterator<WayNode> nodos = via.getWayNodes().iterator();
 		while (tags.hasNext())
 			System.out.print(tags.next().getValue() + "\t");
 		System.out.println("");
 		// nodos
-		while (nodos.hasNext()) {
-			System.out.println("\t" + nodos.next().getNodeId());
-		}
+		System.out.println("nodo origen:"+via.getIdNodoOrigen()+" nodo destino:"+via.getIdNodoDestino());
+
 	}
 	
 	private static ArrayList<infEnlace> getAdjacents(infNodo idNodo) {
@@ -170,10 +165,10 @@ public class main {
 		infEnlace via;
 		PriorityQueue<nodoBusqueda> frontera= new PriorityQueue<>();
 		viasSucesores=getAdjacents(nodoorigen.getNodo()).iterator();
-		//nodosSucesores=map.get(nodoorigen.getNodo().getId()).getVias().iterator();
 		while(viasSucesores.hasNext()){
 			via = viasSucesores.next();
 			// para no añadir un nodo como sucesor que ya hayamos pasado por el ( es decir el padre) o si es el primer caso.
+			// si estamos en la raiz ( todos) o si no estamos cogiendo el nodo padre anterior como sucesor
 			if(nodoorigen.getPadre()==null||!via.getIdNodoOrigen().equals(nodoorigen.getPadre().getNodo()))
 				frontera.add(new nodoBusqueda(via.getIdNodoDestino(),via,via.getDistancia(),nodoorigen.getProfundidad()+1,nodoorigen));
 		}
@@ -184,12 +179,24 @@ public class main {
 		boolean esFinal=origen.equals(fin);
 		return esFinal;
 	}
-	private static ArrayList<nodoBusqueda> stressFrontera(long id, ArrayList<nodoBusqueda> adyacentes){
+	
+	private static ArrayList<nodoBusqueda> stressFrontera(long id){
+		ArrayList<nodoBusqueda> adyacentes = new ArrayList<>();
+		double tiempo=System.currentTimeMillis();
 		try{
-		 adyacentes.add(sucesores(new nodoBusqueda(map.get(id).getInfNodo(),null,0,0,null)).iterator().next());
-		 stressFrontera(adyacentes.get(adyacentes.size()-1).getNodo().getId(),adyacentes);
-		}catch (StackOverflowError e){
-			System.out.println("el numero maximo de nodos es:"+adyacentes.size());
+			while(true){
+				adyacentes.add(sucesores(new nodoBusqueda(map.get(id).getInfNodo(),null,0,0,null)).iterator().next());
+				id=adyacentes.get(adyacentes.size()-1).getNodo().getId();
+				if(adyacentes.size()%1000000==0){
+					//test running
+					System.out.println(".::Elemento "+adyacentes.size()+" añadido::.");
+					System.out.println(".::Tiempo/nodo "+ (System.currentTimeMillis()-tiempo)/adyacentes.size() +" ms::.");
+				}
+			}
+		}catch (OutOfMemoryError e){
+			System.out.println(".::Numero maximo elementos: "+adyacentes.size()+" añadidos::.");
+			System.out.println(".::Tiempo/nodo: "+ (System.currentTimeMillis()-tiempo)/adyacentes.size() +" ms::.");
+			System.out.println(".::Tiempo total: "+(System.currentTimeMillis()-tiempo)+" ms::.");
 		} 
 		return adyacentes;
 	}
@@ -220,7 +227,7 @@ public class main {
 			}
 		}
 		
-		enlaces = stressFrontera(idNodo,new ArrayList<nodoBusqueda>());
+		enlaces = stressFrontera(idNodo);
 		System.out.println("IDNodo:" + idNodo + "\nIntroduzca nodo final:");
 		//pedir final
 		idNodo=0;

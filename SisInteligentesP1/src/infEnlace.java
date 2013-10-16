@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -54,6 +55,9 @@ public class infEnlace{
         Distancia1 = 2 * r * Math.asin(Distancia1);
         Distancia1*=1000; // multiplicamos para obtener metros
         return Distancia1;
+	}
+	public Collection<Tag> getTags() {
+		return this.informacion;
 	}
 
 }
